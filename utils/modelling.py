@@ -1,5 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+
+
 
 def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = {}) -> pd.DataFrame:
     """
@@ -8,7 +11,7 @@ def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = 
     Parameters
     ----------
     df : pd.DataFrame
-        Input DataFrame containing the features to encode.
+        The DataFrame containing the features to encode.
 
     one_hot_columns : list
         List of column names to be one-hot encoded.
@@ -31,3 +34,50 @@ def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = 
 
     return df
 
+
+
+def split_dataset(df: pd.DataFrame, target: str, test_size: float, stratify: bool = False, random_state: int = 123):
+    """
+    Split a dataset into training and testing sets.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        The dataset to split.
+
+    target : str
+        Name of the target column. 
+
+    test_size : float
+        Proportion of the dataset to split.
+
+    stratify : bool, default = False
+        If True, perform a stratified split to keep the target distribution in 
+        the training and testing sets.
+
+    random_state : int, default = 123
+        Random number to reproduce the data split. 
+        
+    Returns
+    -------
+    x_train : pd.DataFrame
+        Training features.
+    x_test : pd.DataFrame
+        Testing features.
+    y_train : pd.Series
+        Training target values.
+    y_test : pd.Series
+        Testing target values.
+
+    """
+    x = df.drop(columns = [target])
+    y = df[target]
+
+    if stratify:
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size, stratify = y, random_state = random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size, stratify = None, random_state = random_state)
+
+    return x_train, x_test, y_train, y_test
+
+    
