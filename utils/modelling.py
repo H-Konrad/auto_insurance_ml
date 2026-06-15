@@ -6,6 +6,8 @@ from sklearn.base import BaseEstimator
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report, roc_curve
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import TunedThresholdClassifierCV
+
 
 
 def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = {}) -> pd.DataFrame:
@@ -98,15 +100,15 @@ def create_pipeline(model: BaseEstimator, preprocessor: ColumnTransformer) -> Pi
     Parameters
     ----------
     model : BaseEstimator
-        A scikit-learn estimator.
+        Scikit-learn estimator.
 
     preprocessor : ColumnTransformer
-        A scikit-learn ColumnTransformer.
+        Scikit-learn ColumnTransformer.
 
     Returns
     -------
     model_pipeline : Pipeline
-        A scikit-learn Pipeline with preprocessing and modelling steps.
+        Scikit-learn Pipeline.
     """
     model_pipeline = Pipeline(
         steps = [
@@ -119,7 +121,7 @@ def create_pipeline(model: BaseEstimator, preprocessor: ColumnTransformer) -> Pi
 
 
 
-def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFrame, 
+def classification_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFrame, 
                            y_train: pd.Series, y_test: pd.Series, report: bool = False) -> dict:
     """
     Runs classification model metrics and creates a dictionary of 
@@ -127,8 +129,8 @@ def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_te
     
     Parameters
     ----------
-    model_pipeline : Pipeline
-        A scikit-learn Pipeline.
+    model : Pipeline
+        scikit-learn Pipeline.
 
     x_train : pd.DataFrame
         Training features.
@@ -142,7 +144,7 @@ def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_te
     y_test : pd.Series
         Testing target values.
 
-    report : bool
+    report : bool, default = False
         True to print classification report.
 
     Returns
@@ -150,10 +152,10 @@ def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_te
     results : dict
         A dictionary of different model metrics.
     """
-    y_train_prediction = model_pipeline.predict(x_train)
-    y_train_probability = model_pipeline.predict_proba(x_train)
-    y_test_prediction = model_pipeline.predict(x_test)
-    y_test_probability = model_pipeline.predict_proba(x_test)
+    y_train_prediction = model.predict(x_train)
+    y_train_probability = model.predict_proba(x_train)
+    y_test_prediction = model.predict(x_test)
+    y_test_probability = model.predict_proba(x_test)
 
     results = {
         "training_accuracy": accuracy_score(y_train, y_train_prediction),
@@ -186,17 +188,17 @@ def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_te
 
 
 
-def optimise_model(model_pipeline: Pipeline, parameters: dict, scoring: str, cv: int, x_train: pd.DataFrame, 
+def optimise_model(model: Pipeline, parameters: dict, scoring: str, cv: int, x_train: pd.DataFrame, 
                    y_train: pd.Series, n_jobs: int = -1) -> GridSearchCV:
     """
     Optimise a model using a grid search.
 
     Parameters
     ----------
-    model_pipeline : Pipeline
-        A Scikit-learn pipeline.
+    model : Pipeline
+        Scikit-learn Pipeline.
 
-    param_grid : dict
+    parameters : dict
         Parameters for the model in the pipeline.
 
     scoring : str
@@ -211,15 +213,15 @@ def optimise_model(model_pipeline: Pipeline, parameters: dict, scoring: str, cv:
     y_train : pd.Series
         Training target values.
 
-    n_jobs : int
+    n_jobs : int, default = -1
         Number of CPU cores.
 
     Returns
     -------
     search : GridSearchCV
-        Scikit-learn GridSearchCV object.
+        Scikit-learn GridSearchCV.
     """
-    model_gs = GridSearchCV(model_pipeline, parameters, scoring = scoring, cv = cv, n_jobs = n_jobs)
+    model_gs = GridSearchCV(model, parameters, scoring = scoring, cv = cv, n_jobs = n_jobs)
     model_gs.fit(x_train, y_train)
 
     print("BEST PARAMETERS")
@@ -229,7 +231,43 @@ def optimise_model(model_pipeline: Pipeline, parameters: dict, scoring: str, cv:
     
     
 
+def optimise_threshold(model: Pipeline | GridSearchCV, scoring: str, cv: int, x_train: pd.DataFrame, 
+                       y_train: pd.Series, random_state: int = 123) -> TunedThresholdClassifierCV:
+    """
+    Optimise a model threshold using TunedThresholdClassifierCV.
 
+    Parameters
+    ----------
+    model : Pipeline | GridSearchCV
+        Scikit-learn Pipeline or GridSearchCV.
+
+    scoring : str
+        Scoring metric.
+
+    cv : int
+        Number of cross-validation folds.
+
+    x_train : pd.DataFrame
+        Training features.
+
+    y_train : pd.Series
+        Training target values.
+
+    random_state : int, default = 123
+        Random number to reproduce the threshold tuning. 
+
+    Returns
+    -------
+    search : GridSearchCV
+        Scikit-learn GridSearchCV.
+    """
+    model_ttc = TunedThresholdClassifierCV(model, scoring = scoring, cv = cv, random_state = random_state)
+    model_ttc.fit(x_train, y_train)
+
+    print("THRESHOLD")
+    print(f"{model_ttc.best_threshold_:.4f}")
+
+    return model_ttc
 
 
 
