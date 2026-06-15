@@ -5,6 +5,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.base import BaseEstimator
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report, roc_curve
+from sklearn.model_selection import GridSearchCV
 
 
 def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = {}) -> pd.DataFrame:
@@ -182,6 +183,51 @@ def classification_results(model_pipeline: Pipeline, x_train: pd.DataFrame, x_te
         print("Classification Report: \n", results["testing_classification_report"])
 
     return results
+
+
+
+def optimise_model(model_pipeline: Pipeline, parameters: dict, scoring: str, cv: int, x_train: pd.DataFrame, 
+                   y_train: pd.Series, n_jobs: int = -1) -> GridSearchCV:
+    """
+    Optimise a model using a grid search.
+
+    Parameters
+    ----------
+    model_pipeline : Pipeline
+        A Scikit-learn pipeline.
+
+    param_grid : dict
+        Parameters for the model in the pipeline.
+
+    scoring : str
+        Scoring metric.
+
+    cv : int
+        Number of cross-validation folds.
+
+    x_train : pd.DataFrame
+        Training features.
+
+    y_train : pd.Series
+        Training target values.
+
+    n_jobs : int
+        Number of CPU cores.
+
+    Returns
+    -------
+    search : GridSearchCV
+        Scikit-learn GridSearchCV object.
+    """
+    model_gs = GridSearchCV(model_pipeline, parameters, scoring = scoring, cv = cv, n_jobs = n_jobs)
+    model_gs.fit(x_train, y_train)
+
+    print("BEST PARAMETERS")
+    print(model_gs.best_params_)
+
+    return model_gs
+    
+    
 
 
 
