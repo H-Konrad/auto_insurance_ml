@@ -1,6 +1,9 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.compose import ColumnTransformer
+from sklearn.base import BaseEstimator
+from sklearn.pipeline import Pipeline
 
 
 
@@ -36,7 +39,7 @@ def encode_features(df: pd.DataFrame, one_hot_columns: list, binary_map: dict = 
 
 
 
-def split_dataset(df: pd.DataFrame, target: str, test_size: float, stratify: bool = False, random_state: int = 123):
+def split_dataset(df: pd.DataFrame, target: str, test_size: float, stratify: bool = False, random_state: int = 123) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Split a dataset into training and testing sets.
 
@@ -79,5 +82,81 @@ def split_dataset(df: pd.DataFrame, target: str, test_size: float, stratify: boo
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = test_size, stratify = None, random_state = random_state)
 
     return x_train, x_test, y_train, y_test
+
+
+
+def create_pipeline(model: BaseEstimator, preprocessor: ColumnTransformer) -> Pipeline:
+    """
+    Create a preprocessing and modelling pipeline.
+
+    Parameters
+    ----------
+    model : BaseEstimator
+        A scikit-learn estimator.
+
+    preprocessor : ColumnTransformer
+        A scikit-learn ColumnTransformer.
+
+    Returns
+    -------
+    Pipeline
+        A scikit-learn Pipeline with preprocessing and modelling steps.
+    """
+    model = Pipeline(
+        steps = [
+            ("preprocessor", preprocessor),
+            ("model", model)
+        ]
+    )
+
+    return model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
