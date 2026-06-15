@@ -176,13 +176,13 @@ def classification_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.Da
     print(f"Accuracy: {results['training_accuracy']:.4f}")
     print("Confusion Matrix: \n", results["training_confusion_matrix"])
     if report:
-        print("Classification Report: \n", results["training_classification_report"])
+        print("Classification Report: \n", classification_report(y_train, y_train_prediction))
 
-    print("TESTING METRICS")
+    print("\nTESTING METRICS")
     print(f"Accuracy: {results['testing_accuracy']:.4f}")
     print("Confusion Matrix: \n", results["testing_confusion_matrix"])
     if report:
-        print("Classification Report: \n", results["testing_classification_report"])
+        print("Classification Report: \n", classification_report(y_test, y_test_prediction))
 
     return results
 
@@ -218,7 +218,7 @@ def optimise_model(model: Pipeline, parameters: dict, scoring: str, cv: int, x_t
 
     Returns
     -------
-    search : GridSearchCV
+    model_gs : GridSearchCV
         Scikit-learn GridSearchCV.
     """
     model_gs = GridSearchCV(model, parameters, scoring = scoring, cv = cv, n_jobs = n_jobs)
@@ -258,19 +258,83 @@ def optimise_threshold(model: Pipeline | GridSearchCV, scoring: str, cv: int, x_
 
     Returns
     -------
-    search : GridSearchCV
+    model_ttc : GridSearchCV
         Scikit-learn GridSearchCV.
     """
     model_ttc = TunedThresholdClassifierCV(model, scoring = scoring, cv = cv, random_state = random_state)
     model_ttc.fit(x_train, y_train)
 
     print("THRESHOLD")
-    print(f"{model_ttc.best_threshold_:.4f}")
+    print(f"{model_ttc.best_threshold_:.4f} \n")
 
     return model_ttc
 
 
 
+def store_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_name: str, stage: str, 
+                  threshold: float, results: dict, save: bool = True) -> pd.DataFrame:
+    """
+    Log evaluation metrics.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing recorded model metrics.
+        
+    file_path : str
+        Path to save results.
+        
+    dataset_version : str
+        Version of the dataset used for training.
+        
+    model_name : str
+        Name of the model being used.
+        
+    stage : str
+        Stage of initial training, optimisation, or threshold tuning.
+        
+    threshold : float
+        Classification probability threshold.
+        
+    results : dict
+        Dictionary containing evaluation outputs.
+
+    save : bool, default = True
+        Whether to save the results to disk. 
+
+    Returns
+    -------
+    metrics_df : pd.DataFrame
+        DataFrame new results. 
+    """
+    better_results = {
+        "dataset_version": dataset_version,
+        "model": model_name,
+        "stage": stage,
+        "tuned_threshold": threshold,
+        "accuracy": results["testing_accuracy"],
+        "true_positive": results["testing_confusion_matrix"][0][0],
+        "false_negative": results["testing_confusion_matrix"][0][1],
+        "false_positive": results["testing_confusion_matrix"][1][0],
+        "true_negative": results["testing_confusion_matrix"][1][1],
+        "precision_0": results["testing_classification_report"]["0"]["precision"],
+        "recall_0": results["testing_classification_report"]["0"]["recall"],
+        "f1_score_0": results["testing_classification_report"]["0"]["f1-score"],
+        "precision_1": results["testing_classification_report"]["1"]["precision"],
+        "recall_1": results["testing_classification_report"]["1"]["recall"],
+        "f1_score_1": results["testing_classification_report"]["1"]["f1-score"],
+        "fpr": results["testing_roc"][0], 
+        "tpr": results["testing_roc"][1],
+        "thresholds": results["testing_roc"][2]
+    }
+
+    results_df = pd.DataFrame([better_results])
+    metrics_df = pd.concat([df, results_df], ignore_index = True)
+
+    if save:
+        metrics_df.to_parquet(file_path, index = False, engine = "pyarrow")
+
+    return metrics_df
 
 
 
@@ -279,36 +343,3 @@ def optimise_threshold(model: Pipeline | GridSearchCV, scoring: str, cv: int, x_
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
