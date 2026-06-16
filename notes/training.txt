@@ -1,0 +1,35 @@
+########## DATASET V1 ##########
+
+##### RANDOM FOREST #####
+1. {'model__criterion': 'entropy', 'model__max_depth': 3, 'model__min_samples_leaf': 5, 'model__min_samples_split': 2, 'model__n_estimators': 100}
+    optimise  ->  [[129  22]
+                   [ 10  39]]
+    threshold ->  [[129  22]
+                   [  9  40]]
+2. {'model__criterion': 'gini', 'model__max_depth': 2, 'model__min_samples_leaf': 6, 'model__min_samples_split': 2, 'model__n_estimators': 100}
+    optimise  ->  [[129  22]
+                   [ 11  38]]
+    threshold ->  [[129  22]
+                   [ 10  39]]
+3. {'model__criterion': 'entropy', 'model__max_depth': 3, 'model__min_samples_leaf': 6, 'model__min_samples_split': 2, 'model__n_estimators': 125}
+    optimise  ->  [[129  22]
+                   [ 10  39]]
+    threshold ->  [[129  22]
+                   [  9  40]]
+
+##### GRADIENT BOOSTING #####
+1. {'model__learning_rate': 0.01, 'model__max_depth': 3, 'model__min_samples_leaf': 4, 'model__min_samples_split': 2, 'model__n_estimators': 200}
+    optimise  ->  [[129  22]
+                   [ 19  30]]
+    threshold ->  [[129  22]
+                   [  4  45]]
+2. {'model__learning_rate': 0.05, 'model__max_depth': 2, 'model__min_samples_leaf': 6, 'model__min_samples_split': 2, 'model__n_estimators': 100}
+    optimise  ->  [[129  22]
+                   [ 12  37]]
+    threshold ->  [[129  22]
+                   [  4  45]]
+3. {'model__learning_rate': 0.05, 'model__max_depth': 2, 'model__min_samples_leaf': 7, 'model__min_samples_split': 2, 'model__n_estimators': 50}
+    optimise  ->  [[129  22]
+                   [ 15  34]]
+    threshold ->  [[129  22]
+                   [  4  45]]
