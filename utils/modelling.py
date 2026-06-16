@@ -335,11 +335,3 @@ def store_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_
         metrics_df.to_parquet(file_path, index = False, engine = "pyarrow")
 
     return metrics_df
-
-
-
-
-
-
-
-
