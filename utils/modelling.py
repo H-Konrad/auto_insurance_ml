@@ -218,16 +218,17 @@ def optimise_model(model: Pipeline, parameters: dict, scoring: str, cv: int, x_t
 
     Returns
     -------
-    model_gs : GridSearchCV
-        Scikit-learn GridSearchCV.
+    best_model : estimator
+        Scikit-learn estimator.
     """
     model_gs = GridSearchCV(model, parameters, scoring = scoring, cv = cv, n_jobs = n_jobs)
     model_gs.fit(x_train, y_train)
+    best_model = model_gs.best_estimator_
 
     print("BEST PARAMETERS")
     print(model_gs.best_params_)
 
-    return model_gs
+    return best_model
     
     
 
