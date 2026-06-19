@@ -421,3 +421,52 @@ def transform_target(model: Pipeline, function: np.ufunc, inverse: np.ufunc) -> 
 
 
 
+def store_regression_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_name: str, 
+                             stage: str, results: dict, save: bool = True) -> pd.DataFrame:
+    """
+    Log evaluation metrics.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame containing recorded model metrics.
+        
+    file_path : str
+        Path to save results.
+        
+    dataset_version : str
+        Version of the dataset used for training.
+        
+    model_name : str
+        Name of the model being used.
+        
+    stage : str
+        Stage of initial training or optimisation.
+        
+    results : dict
+        Dictionary containing evaluation outputs.
+
+    save : bool, default = True
+        Whether to save the results to disk. 
+
+    Returns
+    -------
+    metrics_df : pd.DataFrame
+        DataFrame new results. 
+    """
+    better_results = {
+        "dataset_version": dataset_version,
+        "model": model_name,
+        "stage": stage,
+        "rmse": df["testing_rmse"],
+        "mae": df["testing_mae"],
+        "r2": df["testing_r2"]
+    }
+
+    results_df = pd.DataFrame([better_results])
+    metrics_df = pd.concat([df, results_df], ignore_index = True)
+
+    if save:
+        metrics_df.to_parquet(file_path, index = False, engine = "pyarrow")
+
+    return metrics_df    
