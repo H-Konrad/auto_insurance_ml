@@ -1,12 +1,11 @@
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split, GridSearchCV, TunedThresholdClassifierCV
+from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
 from sklearn.base import BaseEstimator
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report, roc_curve
-from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import TunedThresholdClassifierCV
 from sklearn.metrics import root_mean_squared_error, mean_absolute_error, r2_score
 
 
@@ -415,8 +414,10 @@ def transform_target(model: Pipeline, function: np.ufunc, inverse: np.ufunc) -> 
     model_ttr = TransformedTargetRegressor(
         regressor = model, 
         func = function, 
-        inverse_func = reverse
+        inverse_func = inverse
     )
 
     return model_ttr
-    
+
+
+
