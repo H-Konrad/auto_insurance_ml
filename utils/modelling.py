@@ -340,8 +340,8 @@ def store_classification_results(df: pd.DataFrame, file_path: str, dataset_versi
 
 
 
-def regression_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFrame, 
-                       y_train: pd.Series, y_test: pd.Series) -> dict:
+def regression_results(model: TransformedTargetRegressor, x_train: pd.DataFrame, 
+                       x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series) -> dict:
     """
     Runs regression model metrics and creates a dictionary of 
     different model metrics.
@@ -349,7 +349,7 @@ def regression_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFr
     Parameters
     ----------
     model : Pipeline
-        A scikit-learn Pipeline.
+        Scikit-learn TransformedTargetRegressor.
 
     x_train : pd.DataFrame
         Training features.
