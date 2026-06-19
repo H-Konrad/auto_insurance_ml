@@ -226,7 +226,7 @@ def optimise_model(model: Pipeline, parameters: dict, scoring: str, cv: int, x_t
     best_model = model_gs.best_estimator_
 
     print("BEST PARAMETERS")
-    print(model_gs.best_params_)
+    print(model_gs.best_params_, "\n")
 
     return best_model
     
@@ -389,6 +389,8 @@ def regression_results(model: TransformedTargetRegressor, x_train: pd.DataFrame,
     print(f"MAE: {results["testing_mae"]:.0f}")
     print(f"R^2: {results["testing_r2"]:.3f}")
 
+    return results
+
 
 
 def transform_target(model: Pipeline, function: np.ufunc, inverse: np.ufunc) -> TransformedTargetRegressor:
@@ -458,9 +460,9 @@ def store_regression_results(df: pd.DataFrame, file_path: str, dataset_version: 
         "dataset_version": dataset_version,
         "model": model_name,
         "stage": stage,
-        "rmse": df["testing_rmse"],
-        "mae": df["testing_mae"],
-        "r2": df["testing_r2"]
+        "rmse": results["testing_rmse"],
+        "mae": results["testing_mae"],
+        "r2": results["testing_r2"]
     }
 
     results_df = pd.DataFrame([better_results])
