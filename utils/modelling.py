@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, classification_report, roc_curve
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import TunedThresholdClassifierCV
+from sklearn.metrics import root_mean_squared_error, mean_absolute_error, r2_score
 
 
 
@@ -336,3 +337,55 @@ def store_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_
         metrics_df.to_parquet(file_path, index = False, engine = "pyarrow")
 
     return metrics_df
+
+
+
+def regression_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFrame, 
+                       y_train: pd.Series, y_test: pd.Series) -> dict:
+    """
+    Runs regression model metrics and creates a dictionary of 
+    different model metrics.
+    
+    Parameters
+    ----------
+    model : Pipeline
+        scikit-learn Pipeline.
+
+    x_train : pd.DataFrame
+        Training features.
+        
+    x_test : pd.DataFrame
+        Testing features.
+        
+    y_train : pd.Series
+        Training target values.
+        
+    y_test : pd.Series
+        Testing target values.
+
+    Returns
+    -------
+    results : dict
+        A dictionary of different model metrics.
+    """
+    y_train_prediction = model.predict(x_train)
+    y_test_prediction = model.predict(x_test)
+
+    results = {
+        "training_rmse": root_mean_squared_error(y_train, y_train_prediction),
+        "training_mae": mean_absolute_error(y_train, y_train_prediction),
+        "training_r2": r2_score(y_train, y_train_prediction),
+        "testing_rmse": root_mean_squared_error(y_test, y_test_prediction),
+        "testing_mae": mean_absolute_error(y_test, y_test_prediction),
+        "testing_r2": r2_score(y_test, y_test_prediction),
+    }
+
+    print("TRAINING METRICS")
+    print(f"RMSE: {results["training_rmse"]:.0f}")
+    print(f"MAE: {results["training_mae"]:.0f}")
+    print(f"R^2: {results["training_r2"]:.3f}\n")
+
+    print("TESTING METRICS")
+    print(f"RMSE: {results["testing_rmse"]:.0f}")
+    print(f"MAE: {results["testing_mae"]:.0f}")
+    print(f"R^2: {results["testing_r2"]:.3f}")
