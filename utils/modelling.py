@@ -349,7 +349,7 @@ def regression_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFr
     Parameters
     ----------
     model : Pipeline
-        scikit-learn Pipeline.
+        A scikit-learn Pipeline.
 
     x_train : pd.DataFrame
         Training features.
@@ -389,3 +389,34 @@ def regression_results(model: Pipeline, x_train: pd.DataFrame, x_test: pd.DataFr
     print(f"RMSE: {results["testing_rmse"]:.0f}")
     print(f"MAE: {results["testing_mae"]:.0f}")
     print(f"R^2: {results["testing_r2"]:.3f}")
+
+
+
+def transform_target(model: Pipeline, function: np.ufunc, inverse: np.ufunc) -> TransformedTargetRegressor:
+    """
+    Applies transformation step to the target variable.
+    
+    Parameters
+    ----------
+    model : Pipeline
+        Scikit-learn Pipeline.
+
+    function : np.ufunc
+        Function applied to the target.
+        
+    inverse : np.ufunc
+        Inverse of the function to get back the original target.
+
+    Returns
+    -------
+    model_ttr : TransformedTargetRegressor
+        Scikit-learn TransformedTargetRegressor.
+    """
+    model_ttr = TransformedTargetRegressor(
+        regressor = model, 
+        func = function, 
+        inverse_func = reverse
+    )
+
+    return model_ttr
+    
