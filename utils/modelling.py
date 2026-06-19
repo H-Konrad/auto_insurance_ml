@@ -273,8 +273,8 @@ def optimise_threshold(model: Pipeline | GridSearchCV, scoring: str, cv: int, x_
 
 
 
-def store_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_name: str, stage: str, 
-                  threshold: float, results: dict, save: bool = True) -> pd.DataFrame:
+def store_classification_results(df: pd.DataFrame, file_path: str, dataset_version: str, model_name: str, 
+                                 stage: str, threshold: float, results: dict, save: bool = True) -> pd.DataFrame:
     """
     Log evaluation metrics.
 
