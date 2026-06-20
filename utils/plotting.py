@@ -30,7 +30,10 @@ def plot_feature_importance(x_train: pd.DataFrame, dict_for_df: dict, head_n: in
     """
     features_df = pd.DataFrame(dict_for_df)
     features_df["Features"] = x_train.columns
-    features_df["Logistic Regression"] = features_df["Logistic Regression"].abs()
+    if "Logistic Regression" in dict_for_df.keys():  
+        features_df["Logistic Regression"] = features_df["Logistic Regression"].abs()
+    if "Linear Regression" in dict_for_df.keys():
+        features_df["Linear Regression"] = features_df["Linear Regression"].abs()
 
     if plot:
         fig, axes = plt.subplots(len(dict_for_df), 1, figsize = figsize, constrained_layout = True)
