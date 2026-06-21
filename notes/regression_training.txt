@@ -65,3 +65,37 @@
     RMSE: 14539
     MAE: 10378
     R^2: 0.705
+
+########## DATASET V3 ##########
+
+##### RANDOM FOREST #####
+1. {'regressor__model__max_depth': 3, 'regressor__model__max_features': 0.75, 'regressor__model__min_samples_leaf': 5, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 300} 
+    RMSE: 14426
+    MAE: 10253
+    R^2: 0.709
+
+2. {'regressor__model__max_depth': 3, 'regressor__model__max_features': 0.8, 'regressor__model__min_samples_leaf': 6, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 300} 
+    RMSE: 14421
+    MAE: 10255
+    R^2: 0.710
+
+3. {'regressor__model__max_depth': 2, 'regressor__model__max_features': 0.9, 'regressor__model__min_samples_leaf': 10, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 300} 
+    RMSE: 14378
+    MAE: 10241
+    R^2: 0.711
+
+##### GRADIENT BOOSTING #####
+1. {'regressor__model__learning_rate': 0.025, 'regressor__model__max_depth': 2, 'regressor__model__min_samples_leaf': 5, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 200} 
+    RMSE: 14614
+    MAE: 10424
+    R^2: 0.702
+
+2. {'regressor__model__learning_rate': 0.025, 'regressor__model__max_depth': 2, 'regressor__model__min_samples_leaf': 3, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 225} 
+    RMSE: 14630
+    MAE: 10433
+    R^2: 0.701
+
+3. {'regressor__model__learning_rate': 0.025, 'regressor__model__max_depth': 2, 'regressor__model__min_samples_leaf': 5, 'regressor__model__min_samples_split': 2, 'regressor__model__n_estimators': 175} 
+    RMSE: 14575
+    MAE: 10406
+    R^2: 0.703
