@@ -374,9 +374,13 @@ def regression_results(model: TransformedTargetRegressor, x_train: pd.DataFrame,
         "training_rmse": root_mean_squared_error(y_train, y_train_prediction),
         "training_mae": mean_absolute_error(y_train, y_train_prediction),
         "training_r2": r2_score(y_train, y_train_prediction),
+        "y_training": y_train.values,
+        "y_training_prediction": y_train_prediction,
         "testing_rmse": root_mean_squared_error(y_test, y_test_prediction),
         "testing_mae": mean_absolute_error(y_test, y_test_prediction),
         "testing_r2": r2_score(y_test, y_test_prediction),
+        "y_testing": y_test.values,
+        "y_testing_prediction": y_test_prediction
     }
 
     print("TRAINING METRICS")
@@ -462,7 +466,9 @@ def store_regression_results(df: pd.DataFrame, file_path: str, dataset_version: 
         "stage": stage,
         "rmse": results["testing_rmse"],
         "mae": results["testing_mae"],
-        "r2": results["testing_r2"]
+        "r2": results["testing_r2"],
+        "y_test": results["y_testing"],
+        "y_test_predictions": results["y_testing_prediction"]
     }
 
     results_df = pd.DataFrame([better_results])
