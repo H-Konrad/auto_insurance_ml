@@ -52,7 +52,9 @@ An EDA was performed to investigate the relationship between the features and fr
 - Statistical testing using t-tests and chi-square.
 - Analysis between fraud classes over months and days.
 
-Figures can be found in ```text figures/fraud/eda```
+The key findings include significant differences in claim-related features between fraud and non-fraud cases, as well as a strong association between fraud and several categorical features, particularly `incident_severity` and `insured_hobbies`. 
+
+Figures can be found in `figures/fraud/eda`.
 
 ### Feature Engineering
 Three dataset versions were created and compared.
@@ -61,7 +63,7 @@ Three dataset versions were created and compared.
 - V2: Used the V1 dataset with the addition of `policy_duration` derived from `indicent_date` and `policy_bind_date`.
 - V3: Used the V2 dataset with the addition of `net_capital` derived from `capital-gains` and `capital-loss`. 
 
-Each new feature was briefly analysed against the fraud classes. Figures can be found in ```text figures/feature_engineering/eda```
+Each new feature was briefly analysed against the fraud classes. Figures can be found in `figures/feature_engineering/eda`.
 
 ### Modelling
 The following classification models were trained:
@@ -84,6 +86,22 @@ Each model was evaluated using:
 As the objective here was fraud detection, recall was prioritised to minimise missed fraudulent claims. Accuracy was not assessed due to being a misleading metric for the task. 
 
 ![Model Comparison](figures/fraud/evaluation/fraud_model_metrics_per_dataset.png)
+
+- Logistic regression improved after the introduction of `policy_duration`, but declined with `net_capital`.
+- Random forests' performance decreased with each new dataset version.
+- Gradient boosting metrics remained the same through each version.
+
+![Confusion Matrices](figures/fraud/evaluation/fraud_confusion_matrices_by_model.png)
+
+- Gradient boosting performed the best overall for fraud detection, achieving the highest number of correctly identified fraud cases while maintaining a low false positive rate.
+- Random forest identified the most non-fraud incidents, but misses the most true fraud cases.
+- Logistic regression provides similar results to gradient boosting, but has slightly lower fraud recall and a higher false positive rate. 
+
+![Confusion Matrices](figures/fraud/evaluation/fraud_best_model_feature_importance.png)
+
+- `incident_severity_Major Damage` was the most inflluencial predictor contributing gmore than half of the models total freature importance.
+- `insured_hobbies` incidate that certain customer charactericis, particualry chess and cross-fit, play an iumportant role in model preidcitons.
+-  The enggineered features, `net_capital`, was among the 10 most importatn predictros of fraud for gradient boosting.
 
 ## Insurance Claim Cost Prediction
 
