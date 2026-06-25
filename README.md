@@ -99,15 +99,23 @@ As the objective here was fraud detection, recall was prioritised to minimise mi
 
 ![Confusion Matrices](figures/fraud/evaluation/fraud_best_model_feature_importance.png)
 
-- `incident_severity_Major Damage` was the most inflluencial predictor contributing gmore than half of the models total freature importance.
-- `insured_hobbies` incidate that certain customer charactericis, particualry chess and cross-fit, play an iumportant role in model preidcitons.
--  The enggineered features, `net_capital`, was among the 10 most importatn predictros of fraud for gradient boosting.
+- `incident_severity_Major Damage` was the most influential predictor, contributing more than half of the model's total feature importance.
+- `insured_hobbies` indicates that certain customer characteristics, particularly chess and cross-fit, play an important role in model predictions.
+-  The engineered features, `net_capital`, were among the 10 most important predictors of fraud for gradient boosting.
 
 ## Insurance Claim Cost Prediction
 
-
 ### Exploratory Data Analysis
+An EDA was performed to investigate the relationship between the features and the `total_claim_amount`. This included:
 
+- Relationship between numeric features and the target feature.
+- Correlation analysis between numeric features.
+- Distribution of categorical feature values.
+- Temporal and distribution analysis of `total_claim_amount` across months and days.
+
+The key findings include a clear separation of the `total_claim_amount` into high and low classes, differences in claim amounts across several categorical feature values, and a weak positive relationship between `number_of_vehicles_involved`, `incident_hour_of_the_day`, and the target feature. 
+
+Figures can be found in `figures/claims/eda`.
 
 ### Feature Engineering
 
