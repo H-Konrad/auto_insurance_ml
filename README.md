@@ -63,7 +63,7 @@ Three dataset versions were created and compared.
 - V2: Used the V1 dataset with the addition of `policy_duration` derived from `indicent_date` and `policy_bind_date`.
 - V3: Used the V2 dataset with the addition of `net_capital` derived from `capital-gains` and `capital-loss`. 
 
-Each new feature was briefly analysed against the fraud classes. Figures can be found in `figures/feature_engineering/eda`.
+Each new feature was analysed against the fraud classes. Figures can be found in `figures/feature_engineering/eda`.
 
 ### Modelling
 The following classification models were trained:
@@ -106,6 +106,7 @@ As the objective here was fraud detection, recall was prioritised to minimise mi
 ## Insurance Claim Cost Prediction
 
 ### Exploratory Data Analysis
+
 An EDA was performed to investigate the relationship between the features and the `total_claim_amount`. This included:
 
 - Relationship between numeric features and the target feature.
@@ -119,9 +120,23 @@ Figures can be found in `figures/claims/eda`.
 
 ### Feature Engineering
 
+Three dataset versions were created and compared.
+
+- V1: Baseline cleaned dataset removing ID, high cardinality, and highly correlated features. Split the datetime features into a day feature.
+- V2: Used the V1 dataset with the addition of `vehicle_class`, which maps `auto_model` to a vehicle type such as `SUV` or `sedan`.
+- V3: Used the V1 dataset with the addition of `incident_time_period`, which maps `incident_hour_of_the_day` to classes such as `morning` or `night`.
+
+Each new feature was analysed against the `total_claim_amount`. Figures can be found in `figures/feature_engineering/eda`.
 
 ### Modelling
 
+The following regression models were trained:
+
+- Linear Regression
+- Random Forest
+- Gradient Boosting
+
+The models were trained using an 80:20 train-test split with hyperparameter tuning for random forest and gradient boosting.
 
 ### Evaluation
 
