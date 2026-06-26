@@ -1,5 +1,12 @@
 # Insurance Fraud Detection & Claims Prediction
 
+- [Overview](#Overview)
+- [Dataset](#Dataset)
+- [Data Cleaning](#Data-Cleaning)
+- [Insurance Fraud Classification](#Insurance-Fraud-Classification)
+- [Insurance Claim Cost Prediction](#Insurance-Claim-Cost-Prediction)
+- [Environment Setup](#Environment-Setup)
+
 ## Overview
 
 This project investigates insurance claim fraud detection and claim cost prediction using machine learning. It is split up into two sections: 
@@ -44,6 +51,7 @@ Before any analysis and modelling took place, the quality of the data was assess
 ## Insurance Fraud Classification
 
 ### Exploratory Data Analysis
+
 An EDA was performed to investigate the relationship between the features and fraud. This included:
 
 - Distribution analysis of numeric features.
@@ -57,6 +65,7 @@ The key findings include significant differences in claim-related features betwe
 Figures can be found in `figures/fraud/eda`.
 
 ### Feature Engineering
+
 Three dataset versions were created and compared.
 
 - V1: Baseline cleaned dataset removing ID, high cardinality, and highly correlated features. Separated datetime features into month and day features.
@@ -66,6 +75,7 @@ Three dataset versions were created and compared.
 Each new feature was analysed against the fraud classes. Figures can be found in `figures/feature_engineering/eda`.
 
 ### Modelling
+
 The following classification models were trained:
 
 - Logistic Regression
@@ -75,6 +85,7 @@ The following classification models were trained:
 The models were trained using an 80:20 train-test split with hyperparameter tuning and threshold optimisation where needed.
 
 ### Evaluation
+
 Each model was evaluated using:
 
 - Precision
@@ -85,7 +96,7 @@ Each model was evaluated using:
 
 As the objective here was fraud detection, recall was prioritised to minimise missed fraudulent claims. Accuracy was not assessed due to being a misleading metric for the task. 
 
-![Model Comparison](figures/fraud/evaluation/fraud_model_metrics_per_dataset.png)
+![Fraud Model Comparison](figures/fraud/evaluation/fraud_model_metrics_per_dataset.png)
 
 - Logistic regression improved after the introduction of `policy_duration`, but declined with `net_capital`.
 - Random forests' performance decreased with each new dataset version.
@@ -97,11 +108,19 @@ As the objective here was fraud detection, recall was prioritised to minimise mi
 - Random forest identified the most non-fraud incidents, but misses the most true fraud cases.
 - Logistic regression provides similar results to gradient boosting, but has slightly lower fraud recall and a higher false positive rate. 
 
-![Confusion Matrices](figures/fraud/evaluation/fraud_best_model_feature_importance.png)
+![Fraud Feature Importance](figures/fraud/evaluation/fraud_best_model_feature_importance.png)
 
-- `incident_severity_Major Damage` was the most influential predictor, contributing more than half of the model's total feature importance.
-- `insured_hobbies` indicates that certain customer characteristics, particularly chess and cross-fit, play an important role in model predictions.
+- `incident_severity_Major Damage` was the most influential predictor, contributing more than half of the gradient boosting's total feature importance.
+- `insured_hobbies` indicates that certain customer characteristics, particularly chess and cross-fit, play an important role in gradient boosting predictions.
 -  The engineered features, `net_capital`, were among the 10 most important predictors of fraud for gradient boosting.
+
+The rest of the figures can be found at `figures/fraud/evaluation`.
+
+### Conclusion
+
+- Gradient boosting achieved the strongest overall fraud detection performance, balancing high recall with good precision.
+- As the dataset is small, some important features like `insured_hobbies` are likely dataset-specific and will not generalise to unseen data.
+- The most influential predictor, `incident_severity_Major Damage`, is directly connected with fraud risk, suggesting the model maps capture patterns that are likely to be generalisable.
 
 ## Insurance Claim Cost Prediction
 
@@ -114,7 +133,7 @@ An EDA was performed to investigate the relationship between the features and th
 - Distribution of categorical feature values.
 - Temporal and distribution analysis of `total_claim_amount` across months and days.
 
-The key findings include a clear separation of the `total_claim_amount` into high and low classes, differences in claim amounts across several categorical feature values, and a weak positive relationship between `number_of_vehicles_involved`, `incident_hour_of_the_day`, and the target feature. 
+The key findings include a bimodal distribution in `total_claim_amount` betweenm high and low claims, differences in claim amounts across several categorical feature values, and a weak positive relationship between `number_of_vehicles_involved`, `incident_hour_of_the_day`, and the target feature. 
 
 Figures can be found in `figures/claims/eda`.
 
@@ -126,7 +145,7 @@ Three dataset versions were created and compared.
 - V2: Used the V1 dataset with the addition of `vehicle_class`, which maps `auto_model` to a vehicle type such as `SUV` or `sedan`.
 - V3: Used the V1 dataset with the addition of `incident_time_period`, which maps `incident_hour_of_the_day` to classes such as `morning` or `night`.
 
-Each new feature was analysed against the `total_claim_amount`. Figures can be found in `figures/feature_engineering/eda`.
+Each new feature was analysed against the `total_claim_amount`. Figures can be found in `figures/clams/feature_engineering`.
 
 ### Modelling
 
@@ -139,6 +158,51 @@ The following regression models were trained:
 The models were trained using an 80:20 train-test split with hyperparameter tuning for random forest and gradient boosting.
 
 ### Evaluation
+
+Each model was evaluated using:
+
+- Root mean square error (RMSE)
+- Mean absolute error (MAE)
+- $R^{2}$
+
+![Claims Model Comparison](figures/claims/evaluation/claims_model_metrics_per_dataset.png)
+
+- Linear regression performance declined with each new dataset verison, with higher RMSE and MAE and a lower $R^{2}$.
+- Random forest perforamnce improved across dataset versions, with lower RMSE and higher $R^{2}$ values. However, MAE increased with the additon of `incident_time_period`.
+- Gradient boosting showed large imporvement with the addition of `vehicle_class`, but got worse with `incident_time_period`.
+
+![Actual vs Predictions](figures/claims/evaluation/claims_actual_vs_predicted.png)
+
+- All three models identified two distinct claim groups, with predictions clustering around the lower and higher claim classes, which reflects the bimodal distribution of the data.
+- Linear regression produces the widest spread of predictions for both claim groups, suggesting more variability in predictions.
+- Random forest produces very dense predictions around 5,000 and 60,000, which are close to the means of each claim class.
+- Gradient boosting performance is between the other models, prodictions more dense predicitons than linear forest but with more variation than random forest. 
+
+![Claims Feature Importance](figures/claims/evaluation/claims_best_model_feature_importance.png)
+
+- Random forest model heavily relies on a single feature `collision_type_unknown` for its predictions.
+- The remaining predictions are distributed among four features, three of which are `incident_type` values.
+- The model appears to first distinguish between the claim classes before making small adjustments to predictions using other features. This behaviour is consistent with a prediction scatter plot.
+
+The rest of the figures can be found at `figures/claims/evaluation`.
+
+### Conclusion
+
+- Overall, all models struggled to accuratley predict the `total_claim_amount`, with predictions regressing to the mean as metrics became better.
+- An approach utilising three models would be the next step: create a classifier to distinguish between high and low claims, and then use two separate regression models to predict the claim amount within each class.
+- There are problems with the proposed approach, particularly the class imbalance and the size of the dataset, which limits the total training data available for all models. 
+
+## Environment Setup
+
+Create the environment: `conda env create -f environment.yml`
+Activate: `conda activate auto_insurance_ml`
+
+
+
+
+
+
+
 
 
 
