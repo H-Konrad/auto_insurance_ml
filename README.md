@@ -1,10 +1,23 @@
 # Insurance Fraud Detection & Claims Prediction
 
+## Contents
+
 - [Overview](#Overview)
-- [Dataset](#Dataset)
+    - [Repository Structure](#Repository-Structure)
+    - [Dataset](#Dataset)
 - [Data Cleaning](#Data-Cleaning)
 - [Insurance Fraud Classification](#Insurance-Fraud-Classification)
+    - [Exploratory Data Analysis](#Exploratory-Data-Analysis)
+    - [Feature Engineering](#Feature-Engineering)
+    - [Modelling](#Modelling)
+    - [Evaluation](#Evaluation)
+    - [Conclusion](#Conclusion)
 - [Insurance Claim Cost Prediction](#Insurance-Claim-Cost-Prediction)
+    - [Exploratory Data Analysis](#Exploratory-Data-Analysis)
+    - [Feature Engineering](#Feature-Engineering)
+    - [Modelling](#Modelling)
+    - [Evaluation](#Evaluation)
+    - [Conclusion](#Conclusion)
 - [Environment Setup](#Environment-Setup)
 
 ## Overview
